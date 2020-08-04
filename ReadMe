@@ -1,0 +1,88 @@
+########## Model Register ##########
+
+class PetType(models.Model):
+    name = models.CharField(max_length=30)
+
+    def __str__(self):
+        return self.name
+
+class Food(models.Model):
+    name = models.CharField(max_length=30)
+    calories = models.FloatField(default=0.0)
+    amount = models.FloatField(default=0.0)
+
+    def __str__(self):
+        return self.name
+
+class Pet(models.Model):
+    name = models.CharField(max_length=30)
+    pet_type_id = models.ForeignKey(PetType, name='pettype', on_delete=models.CASCADE)
+    food_id = models.ForeignKey(Food, name='food', on_delete=models.CASCADE)
+    hungry = models.BooleanField(default=False)
+    weight = models.FloatField(default=0.0)
+    birthday = models.DateTimeField(name='birthday',default=None)
+    age = models.IntegerField(default=0)
+    photo = models.ImageField()
+
+    def __str__(self):
+        return self.name
+
+class Specialty(models.Model):
+    name = models.CharField(max_length = 128)
+    
+    def __str__(self):
+        return self.name
+
+class Vet(models.Model):
+    first_name = models.CharField(max_length = 128)
+    last_name = models.CharField(max_length = 128)
+    specialties = models.ManyToManyField(Specialty)
+    
+    def __str__(self):
+        return self.first_name + " " + self.last_name
+
+class Visit(models.Model):
+    visit_date = models.DateTimeField()
+    description = models.TextField()
+    pet_id = models.ForeignKey(Pet,on_delete=models.CASCADE)
+    
+    def __str__(self):
+        return self.description
+
+########## Admin Register ##########
+
+class PetTypeAdmin(admin.ModelAdmin):
+
+    list_display = ['name']
+
+admin.site.register(PetType,PetTypeAdmin)
+
+class FoodAdmin(admin.ModelAdmin):
+
+    list_display = ['name','calories','amount']
+
+admin.site.register(Food,FoodAdmin)
+
+class PetAdmin(admin.ModelAdmin):
+
+    list_display = ['name','pettype','photo','birthday','age','weight','food']
+
+admin.site.register(Pet,PetAdmin)
+
+class SpecialtyAdmin(admin.ModelAdmin):
+
+    list_display = ['name']
+
+admin.site.register(Specialty,SpecialtyAdmin)
+
+class VisitAdmin(admin.ModelAdmin):
+
+    list_display = ['visit_date','description','pet']
+
+admin.site.register(Visit,VisitAdmin)
+
+class VetAdmin(admin.ModelAdmin):
+
+    list_display = ['first_name','last_name']
+
+admin.site.register(Vet,VetAdmin)
